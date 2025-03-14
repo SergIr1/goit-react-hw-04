@@ -11,6 +11,10 @@
   color: rgb(255, 255, 255);
 }
 
+.text {
+  text-align: center;
+}
+
 /* #root {
   max-width: 1280px;
   margin: 0 auto;

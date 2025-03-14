@@ -1,25 +1,19 @@
+.header {
+  margin: 0 auto;
+  margin-bottom: 20px;
+  max-width: 1240px;
+}
+
 .form {
   display: flex;
-  flex-direction: column;
-  /* align-items: center; */
-  max-width: 400px;
-  padding: 15px;
+  justify-content: center;
+  gap: 20px;
+  max-width: 375px;
   margin: 0 auto;
-}
-
-.textLabel {
-  display: flex;
-  margin-bottom: 3px;
-  color: rgb(255, 255, 255);
-}
-
-.textLabel:not(:first-child) {
-  margin-top: 10px;
 }
 
 .input {
   width: 100%;
-  /* margin-bottom: 15px; */
   background: rgba(0, 0, 0, 0.3);
   outline: none;
   padding: 10px;
@@ -35,7 +29,6 @@
   width: 115px;
   height: 40px;
   margin: 0 auto;
-  margin-top: 15px;
   padding: 0;
   border: none;
   color: rgb(255, 255, 255);
@@ -52,11 +45,4 @@
   background-color: rgba(0, 0, 0, 0.4);
   color: green;
   box-shadow: rgba(100, 100, 100, 0.2) 0px -5px 45px inset;
-}
-
-.error {
-  display: block;
-  color: red;
-  margin-top: 5px;
-  /* margin-bottom: 5px; */
 }

@@ -1,0 +1,12 @@
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.item {
+  width: calc((100% - 40px) / 3);
+}

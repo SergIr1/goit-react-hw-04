@@ -1,101 +1,102 @@
 import css from './App.module.css';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-import ContactForm from '../ContactForm/ContactForm';
-import ContactList from '../ContactList/ContactList';
-import SearchBox from '../SearchBox/SearchBox';
-
-const initialContact = [
-  { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-  { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-  { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-  { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-];
+import { fetchImage } from '../../js/image-api.js';
+import SearchBar from '../SearchBar/SearchBar.jsx';
+import ImageGallery from '../ImageGallery/ImageGallery.jsx';
 
 export default function App() {
-  const [contactList, setContactList] = useState(() => {
-    const savedInitialContact = localStorage.getItem('contacts');
+  // const [clicks, setClicks] = useState(0);
+  const [image, setImage] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(1);
 
-    if (savedInitialContact !== null) {
-      return JSON.parse(savedInitialContact);
-    }
-    return initialContact;
-  });
-  const [filterValue, setFilterValue] = useState('');
+  // useEffect(() => {
+  //   console.log(clicks);
+  //   async function getImage() {
+  //     try {
+  //       const data = await fetchImage();
+  //       console.log(data);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   }
 
-  const addContact = newContact => {
-    setContactList(prevContact => {
-      return [...prevContact, newContact];
-    });
+  //   getImage();
+  //     fetchImage()
+  //       .then(data => console.log(data))
+  //       .catch();
+  //   },
+  // }, [clicks]);
+  // ==================================================================================
+
+  const handleSearch = topic => {
+    setSearchTerm(topic);
+    setPage(1);
+    setImage([]);
   };
-
-  const deleteContact = contactId => {
-    console.log(contactId);
-    setContactList(prevContact => {
-      return prevContact.filter(contact => contact.id !== contactId);
-    });
-  };
-
-  const visibleContacts = contactList.filter(contact =>
-    contact.name.toLowerCase().includes(filterValue.toLowerCase())
-  );
+  // const handleSearch = async topic => {
+  //   try {
+  //     setSearchTerm(topic);
+  //     setPage(1);
+  //     setError(false);
+  //     setIsLoading(true);
+  //     setImage([]);
+  //     const data = await fetchImage(topic);
+  //     setImage(data);
+  //     console.log(data);
+  //   } catch {
+  //     setError(true);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contactList));
-  }, [contactList]);
+    if (searchTerm === '') {
+      return;
+    }
+    async function getData() {
+      try {
+        setIsLoading(true);
+        setError(false);
+
+        const data = await fetchImage(searchTerm, page);
+
+        setImage(prevImegas => {
+          return [...prevImegas, ...data];
+        });
+      } catch {
+        setError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    console.log(page, searchTerm);
+    getData();
+  }, [searchTerm, page]);
 
   return (
     <div className={css.container}>
       <h1 className={css.title}>Phonebook</h1>
-      <ContactForm onAdd={addContact} />
-      <SearchBox value={filterValue} onChange={setFilterValue} />
-      <ContactList contacts={visibleContacts} onDelete={deleteContact} />
+
+      <SearchBar onSubmit={handleSearch} />
+
+      {image.length > 0 && <ImageGallery items={image} />}
+
+      {isLoading && <p className={css.text}>Loading data, please is wait...</p>}
+
+      {error && (
+        <p className={css.text}>Whoops there was an error plz reload...</p>
+      )}
+
+      {image.length > 0 && !isLoading && (
+        <button onClick={() => setPage(page + 1)}>
+          Load more imegas {page}
+        </button>
+      )}
     </div>
   );
 }
-
-// ======================= hands work =======================
-
-// export default function App() {
-//   const [contactList, setContactList] = useState(() => {
-//     const savedInitialContact = localStorage.getItem('contacts');
-
-//     if (savedInitialContact !== null) {
-//       return JSON.parse(savedInitialContact);
-//     }
-//     return initialContact;
-//   });
-//   const [filterValue, setFilterValue] = useState('');
-
-//   const addContact = newContact => {
-//     setContactList(prevContact => {
-//       return [...prevContact, newContact];
-//     });
-//   };
-
-//   const deleteContact = contactId => {
-//     console.log(contactId);
-//     setContactList(prevContact => {
-//       return prevContact.filter(contact => contact.id !== contactId);
-//     });
-//   };
-
-//   const visibleContacts = contactList.filter(contact =>
-//     contact.name.toLowerCase().includes(filterValue.toLowerCase())
-//   );
-
-//   useEffect(() => {
-//     localStorage.setItem('contacts', JSON.stringify(contactList));
-//   }, [contactList]);
-
-//   return (
-//     <div className={css.container}>
-//       <h1 className={css.title}>Phonebook</h1>
-//       <ContactForm onAdd={addContact} />
-//       <SearchBox value={filterValue} onChange={setFilterValue} />
-//       <ContactList contacts={visibleContacts} onDelete={deleteContact} />
-//     </div>
-//   );
-// }
-
-// ======================= /hands work =======================
