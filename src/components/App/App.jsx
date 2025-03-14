@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { fetchImage } from '../../js/image-api.js';
 import SearchBar from '../SearchBar/SearchBar.jsx';
 import ImageGallery from '../ImageGallery/ImageGallery.jsx';
+import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn.jsx';
 
 export default function App() {
   // const [clicks, setClicks] = useState(0);
@@ -80,8 +81,6 @@ export default function App() {
 
   return (
     <div className={css.container}>
-      <h1 className={css.title}>Phonebook</h1>
-
       <SearchBar onSubmit={handleSearch} />
 
       {image.length > 0 && <ImageGallery items={image} />}
@@ -93,10 +92,14 @@ export default function App() {
       )}
 
       {image.length > 0 && !isLoading && (
+        <LoadMoreBtn page={page} onPage={setPage} />
+      )}
+
+      {/* {image.length > 0 && !isLoading && (
         <button onClick={() => setPage(page + 1)}>
           Load more imegas {page}
         </button>
-      )}
+      )} */}
     </div>
   );
 }
