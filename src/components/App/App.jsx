@@ -2,9 +2,12 @@ import css from './App.module.css';
 import { useEffect, useState } from 'react';
 
 import { fetchImage } from '../../js/image-api.js';
+import toast, { Toaster } from 'react-hot-toast';
 import SearchBar from '../SearchBar/SearchBar.jsx';
 import ImageGallery from '../ImageGallery/ImageGallery.jsx';
 import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn.jsx';
+import Loader from '../Loader/Loader.jsx';
+import ImageModal from '../ImageModal/ImageModal.jsx';
 
 export default function App() {
   // const [clicks, setClicks] = useState(0);
@@ -13,47 +16,16 @@ export default function App() {
   const [error, setError] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
-
-  // useEffect(() => {
-  //   console.log(clicks);
-  //   async function getImage() {
-  //     try {
-  //       const data = await fetchImage();
-  //       console.log(data);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   }
-
-  //   getImage();
-  //     fetchImage()
-  //       .then(data => console.log(data))
-  //       .catch();
-  //   },
-  // }, [clicks]);
-  // ==================================================================================
+  const [hasMore, setHasMore] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSearch = topic => {
     setSearchTerm(topic);
     setPage(1);
     setImage([]);
+    setHasMore(true);
   };
-  // const handleSearch = async topic => {
-  //   try {
-  //     setSearchTerm(topic);
-  //     setPage(1);
-  //     setError(false);
-  //     setIsLoading(true);
-  //     setImage([]);
-  //     const data = await fetchImage(topic);
-  //     setImage(data);
-  //     console.log(data);
-  //   } catch {
-  //     setError(true);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
   useEffect(() => {
     if (searchTerm === '') {
@@ -66,40 +38,64 @@ export default function App() {
 
         const data = await fetchImage(searchTerm, page);
 
-        setImage(prevImegas => {
-          return [...prevImegas, ...data];
+        if (data.length === 0 || data.length < 15) {
+          setHasMore(false);
+        }
+
+        setImage(prevImages => {
+          return [...prevImages, ...data];
         });
       } catch {
         setError(true);
+        toast.error('Whoops there was an error plz reload...', {
+          duration: 4000,
+          position: 'top-right',
+          className: `${css['custom-toast-error']} ${css['error']}`,
+        });
       } finally {
         setIsLoading(false);
       }
     }
-    console.log(page, searchTerm);
+
     getData();
   }, [searchTerm, page]);
+
+  const openModal = imageUrl => {
+    setSelectedImage(imageUrl);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedImage(null);
+  };
 
   return (
     <div className={css.container}>
       <SearchBar onSubmit={handleSearch} />
+      {image.length > 0 && (
+        <ImageGallery items={image} onImageClick={openModal} />
+      )}
 
-      {image.length > 0 && <ImageGallery items={image} />}
+      {/* {image.length > 0 && <ImageGallery items={image} />} */}
 
-      {isLoading && <p className={css.text}>Loading data, please is wait...</p>}
+      {isLoading && <Loader loading={isLoading} />}
+      {/* <p className={css.text}>Loading data, please is wait...</p> */}
 
       {error && (
         <p className={css.text}>Whoops there was an error plz reload...</p>
       )}
 
-      {image.length > 0 && !isLoading && (
+      {image.length > 0 && !isLoading && hasMore && (
         <LoadMoreBtn page={page} onPage={setPage} />
       )}
-
-      {/* {image.length > 0 && !isLoading && (
-        <button onClick={() => setPage(page + 1)}>
-          Load more imegas {page}
-        </button>
-      )} */}
+      <ImageModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        imageUrl={selectedImage}
+        alt="Selected"
+      />
+      <Toaster position="top-right" />
     </div>
   );
 }

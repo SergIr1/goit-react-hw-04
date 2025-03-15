@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-// ?client_id=B0LAYPd4Gx_4nCCOggKHDmOqCpp-VI6wfsmce2JRUa8
-
 export const fetchImage = async (topic, currentPage) => {
   const axiosParams = {
     params: {
