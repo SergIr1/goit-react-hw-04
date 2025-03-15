@@ -8,6 +8,7 @@ import ImageGallery from '../ImageGallery/ImageGallery.jsx';
 import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn.jsx';
 import Loader from '../Loader/Loader.jsx';
 import ImageModal from '../ImageModal/ImageModal.jsx';
+import ErrorMessage from '../ErrorMessage/ErrorMessage.jsx';
 
 export default function App() {
   // const [clicks, setClicks] = useState(0);
@@ -82,9 +83,7 @@ export default function App() {
       {isLoading && <Loader loading={isLoading} />}
       {/* <p className={css.text}>Loading data, please is wait...</p> */}
 
-      {error && (
-        <p className={css.text}>Whoops there was an error plz reload...</p>
-      )}
+      {error && <ErrorMessage />}
 
       {image.length > 0 && !isLoading && hasMore && (
         <LoadMoreBtn page={page} onPage={setPage} />

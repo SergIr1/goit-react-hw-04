@@ -1,7 +1,7 @@
 import Modal from 'react-modal';
 import css from './ImageModal.module.css';
 
-Modal.setAppElement('#root'); // Для доступности
+Modal.setAppElement('#root');
 
 export default function ImageModal({ isOpen, onClose, imageUrl, alt }) {
   return (
